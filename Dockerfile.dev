@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+COPY requirements.txt requirements-dev.txt ./
+RUN pip install -r requirements.txt && pip install -r requirements-dev.txt
+
+COPY app/ ./app
+
+ENV ENV=dev
+CMD ["python", "-m", "app.main"]
