@@ -1,17 +1,22 @@
+import streamlit as st
 from model_loader import load_my_model
+from preprocess import preprocess_image
 from PIL import Image
 import numpy as np
-from preprocess import preprocess_image
 
-if __name__ == "__main__":
-    print("🔁 Chargement du modèle...")
-    model = load_my_model()
+# Load the model outside to avoid reloading it every time
+model = load_my_model()
 
-    img = Image.new("RGB", (256, 256))  # Replace this with a real image for better results
+st.title("Image Classifier")
+
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    img = Image.open(uploaded_file)
+    st.image(img, caption="Uploaded Image", use_column_width=True)
+
     arr = preprocess_image(img)
-
-    input_batch = np.expand_dims(arr, axis=0)  # Shape should be (1, 256, 256, 3)
-    print("📏 Input batch shape:", input_batch.shape)
+    input_batch = np.expand_dims(arr, axis=0)
 
     predictions = model.predict(input_batch)
-    print("✅ Prédiction:", predictions)
+    st.write("✅ Prediction:", predictions)
